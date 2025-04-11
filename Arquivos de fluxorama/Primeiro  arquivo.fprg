@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="Primeiro  arquivo"/>
+        <attribute name="authors" value="Victor"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-04-09 10:49:55 "/>
+        <attribute name="created" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTA5OyIwOTozMzowNyAiOzI4NzI="/>
+        <attribute name="edited" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTA5OyIxMDo0OTo1NSAiOzI7Mjk4Mw=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="nome, sobrenome" type="String" array="False" size=""/>
+            <declare name="pontuacao" type="Real" array="False" size=""/>
+            <declare name="nota1, nota2, nota3, nota4, media, idade" type="Real" array="False" size=""/>
+            <output expression="&quot;Qual &#233; o seu nome? &quot;" newline="True"/>
+            <input variable="nome"/>
+            <output expression="&quot;Qual &#233; o seu sobrenome? &quot;" newline="True"/>
+            <input variable="sobrenome"/>
+            <output expression="&quot;Qual &#233; a sua idade? &quot;" newline="True"/>
+            <input variable="idade"/>
+            <output expression="&quot;Agora me diga a suas notas&quot;" newline="True"/>
+            <input variable="nota1"/>
+            <input variable="nota2"/>
+            <input variable="nota3"/>
+            <input variable="nota4"/>
+            <assign variable="media" expression="(nota1+nota2+nota3+nota4)/4"/>
+            <output expression="&quot;Seu nome &#233;: &quot; &amp; nome &amp; &quot; seu sobrenome: &quot; &amp; sobrenome &amp; &quot; e sua idade &#233;: &quot; &amp; idade" newline="True"/>
+            <output expression="&quot;sua media foi de: &quot; &amp; media" newline="True"/>
+        </body>
+    </function>
+    <function name="pontuacao" type="Real" variable="pontuacao">
+        <parameters/>
+        <body>
+            <declare name="pontuacao" type="Real" array="False" size=""/>
+        </body>
+    </function>
+</flowgorithm>

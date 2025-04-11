@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="fluxograma de verdadero e falso"/>
+        <attribute name="authors" value="Victor"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-04-09 10:23:27 "/>
+        <attribute name="created" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTA5OyIxMDoxNTozNyAiOzI4Njc="/>
+        <attribute name="edited" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTA5OyIxMDoyMzoyNyAiOzE7Mjk3Mw=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="janeiro, fevereiro, marco, abril, media" type="Real" array="False" size=""/>
+            <input variable="janeiro"/>
+            <input variable="fevereiro"/>
+            <input variable="marco"/>
+            <input variable="abril"/>
+            <assign variable="media" expression="(janeiro+fevereiro+marco+abril)/4"/>
+            <output expression="media" newline="True"/>
+            <if expression="media&gt;=5000">
+                <then>
+                    <output expression="&quot;Parab&#233;ns voc&#234; atingiu sua meta, vai receber abono de 10%&quot;" newline="True"/>
+                </then>
+                <else>
+                    <output expression="&quot;Infelizmente n&#227;o atingiu sua meta, ficou sem abono&quot;" newline="True"/>
+                </else>
+            </if>
+        </body>
+    </function>
+</flowgorithm>

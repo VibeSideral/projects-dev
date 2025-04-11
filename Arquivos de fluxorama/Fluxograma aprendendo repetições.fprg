@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="Fluxograma aprendendo repeti&#231;&#245;es"/>
+        <attribute name="authors" value="Victor"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-04-09 11:01:36 "/>
+        <attribute name="created" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTA5OyIxMDo1NzowMyAiOzI4NjY="/>
+        <attribute name="edited" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTA5OyIxMTowMTozNiAiOzE7Mjk3MA=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="limite, numero" type="Integer" array="False" size=""/>
+            <assign variable="numero" expression="9"/>
+            <assign variable="limite" expression="90"/>
+            <while expression="numero&lt;=limite">
+                <output expression="&quot;Contagem da tabuada do numero 9: &quot; &amp; numero" newline="True"/>
+                <assign variable="numero" expression="numero+9"/>
+            </while>
+        </body>
+    </function>
+</flowgorithm>
