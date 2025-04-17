@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="tarefas"/>
+        <attribute name="authors" value="Victor"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-04-17 03:14:23 "/>
+        <attribute name="created" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTE3OyIwMToyMjoyOSAiOzI4NjU="/>
+        <attribute name="edited" value="VmljdG9yO0RFU0tUT1AtSDNINTVVSTsyMDI1LTA0LTE3OyIwMzoxNDoyMyAiOzI7Mjk3MQ=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="escreva, resposta, descanso" type="String" array="False" size=""/>
+            <declare name="sim, nao" type="Boolean" array="False" size=""/>
+            <assign variable="sim" expression="true"/>
+            <assign variable="escreva" expression="&quot;Suas tarefas pendentes sao: &quot;"/>
+            <assign variable="descanso" expression="&quot;Hora de descansar e vou jogar video game!!&quot;"/>
+            <declare name="tarefas, EmProgresso, Finalizada, NaoIniciada, tarefaDia" type="String" array="False" size=""/>
+            <declare name="lavarLouca, tomarBanho, estudar, fazerTerritorio" type="String" array="False" size=""/>
+            <assign variable="tarefaDia" expression="&quot;Lavar a louca, Estudar, Fazer mais Territorios e Tomar um Banho&quot;"/>
+            <output expression="&quot;Quer ver suas tarefas pendentes ? &quot;" newline="True"/>
+            <input variable="resposta"/>
+            <if expression="sim =! nao">
+                <then>
+                    <output expression="escreva &amp; tarefaDia" newline="True"/>
+                    <breakpoint expression="" always="True"/>
+                </then>
+                <else>
+                    <output expression="descanso" newline="True"/>
+                </else>
+            </if>
+        </body>
+    </function>
+</flowgorithm>
