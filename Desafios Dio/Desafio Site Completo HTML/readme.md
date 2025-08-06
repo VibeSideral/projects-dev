@@ -52,10 +52,5 @@ O site simula a presença digital da **Clínica Vida Saudável**, oferecendo inf
 
 Este projeto foi desenvolvido com o auxílio do GitHub Copilot, que sugeriu códigos, exemplos e boas práticas durante o desenvolvimento.
 
-## 📷 Demonstração
-
-![Demonstração do site](https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80)
-
----
-
 Desenvolvido por Victor para o desafio DIO.me
+
