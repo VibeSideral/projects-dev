@@ -1,19 +1,19 @@
-🔐 Caderno Temático: Como Iniciar na Carreira de Cibersegurança
-Contexto e Objetivos
+# 📚 Guia de Carreira em Cibersegurança 2026
 
-Este caderno temático foi criado com o objetivo de estruturar meu aprendizado sobre como ingressar na carreira de cibersegurança. O foco do estudo inclui:
+> Um caderno temático criado para estruturar estudos sobre carreira em Cibersegurança, utilizando o NotebookLM como sistema de pesquisa, análise e consolidação de conhecimento.
 
+---
 
-Linguagens de programação mais relevantes para a área
-Principais carreiras e especializações disponíveis
-Passos práticos para entrar no mercado
-Tendências do setor em 2026
-Certificações necessárias e recomendadas
+## 🎯 Objetivos do Estudo
+
+Este projeto foi desenvolvido para responder uma pergunta central:
+
+> **Como ingressar na área de Cibersegurança em 2026?**
 
 Além disso, utilizei o NotebookLM como meu "segundo cérebro" — uma base de conhecimento viva onde depositei fontes, fiz perguntas estratégicas e refinei meu entendimento sobre o tema.
 
 Curadoria de Fontes
-Selecionei de 3 a 5 fontes abertas (texto/PDF) e fiz upload no NotebookLM para servir como base do estudo:
+Selecionei de 3 fontes abertas (texto/PDF) e fiz upload no NotebookLM para servir como base do estudo:
 
 #	Título / Descrição	Link
 1
@@ -34,17 +34,6 @@ Selecionei de 3 a 5 fontes abertas (texto/PDF) e fiz upload no NotebookLM para s
 
 [[Link](https://www.youtube.com/watch?v=YYnYb-7VjgM)]
 
-4
-
-[Best programming language for Cybersecurity]
-
-[[Link](https://codelabsacademy.com/en/blog/best-programming-language-for-cybersecurity-2026-python)]
-
-5
-
-[Principais certificações para Cibersegurança]
-
-[[Link](https://www.checkpoint.com/es/cyber-hub/cyber-security/what-is-cybersecurity/top-cybersecurity-certifications-in-2025/)]
 
 Engenharia de Prompts e "Cicatrizes"
 Abaixo estão as perguntas estratégicas que elaborei, as variações que testei e o que aprendi com cada tentativa.
