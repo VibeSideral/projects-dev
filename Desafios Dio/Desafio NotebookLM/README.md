@@ -16,19 +16,16 @@ Curadoria de Fontes
 Selecionei de 3 fontes abertas (texto/PDF) e fiz upload no NotebookLM para servir como base do estudo:
 
 #	Título / Descrição	Link
-1
 
 [Como Começar em Cibersegurança em 2026]
 
 [[Link](https://www.youtube.com/watch?v=fm_TP-VOzhs)]
 
-2
 
 [Certificações em Cibersegurança - Qual é a melhor?]
 
 [[Link](https://www.youtube.com/watch?v=XK1ZgtlageA)]
 
-3
 
 [Como construir minha carreira em Cibersegurança]
 
