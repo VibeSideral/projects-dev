@@ -1,0 +1,9 @@
+{
+  "files.useExperimentalFileWatcher": false,
+  "files.watcherExclude": {
+    "**/out/**": true,
+    "**/node_modules/**": true,
+    "**/.git/**": true,
+    "**/dist/**": true
+  }
+}

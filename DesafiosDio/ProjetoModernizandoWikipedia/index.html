@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modernizando Wikipedia</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <button id="theme-toggle" aria-label="Alternar modo escuro/claro" class="theme-toggle">🌙</button>
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="assets/images/logo.png" width="50" alt="Logo Modernizando Wikipedia" style="vertical-align:middle;" />
+            <span class="topbar-title">Wikipédia</span>
+            <span class="topbar-desc">A enciclopédia livre</span>
+        </div>
+        <nav class="tabs">
+            <a href="#" class="tab active">Página principal</a>
+            <a href="#" class="tab">Discussão</a>
+        </nav>
+        <form class="search-form" role="search" aria-label="Pesquisar na Wikipedia">
+            <input type="search" placeholder="Pesquisar na Wikipedia" aria-label="Pesquisar" />
+            <button type="submit">Pesquisar</button>
+        </form>
+        <div class="topbar-links">
+            <a href="#">Donativos</a>
+            <a href="#">Criar uma conta</a>
+            <a href="#">Entrar</a>
+        </div>
+    </div>
+
+    <div class="donation-banner">
+        <span class="banner-icon">&#9432;</span>
+        <strong>5 de agosto:</strong> talvez você não veja esta mensagem da próxima vez que estiver aqui
+        <p>Desculpe, já pedimos antes, mas é terça-feira, e logo será tarde para ajudar a entidade sem fins lucrativos por trás da Wikipedia. Ficamos felizes por você acessar a Wikipedia com frequência. Se todas as pessoas lendo isto doassem R$ 15, atingiríamos nossa meta em poucas horas. Apenas 2% dos nossos leitores doam; por isso, se a Wikipedia lhe proporcionou conhecimento no valor de R$ 15, retribua. Qualquer contribuição ajuda, seja de R$ 15 ou R$ 60.</p>
+        <button class="donate-btn">Doar R$ 15</button>
+        <button class="donate-btn-alt">Doar outro valor</button>
+    </div>
+
+    <!-- tabs moved to header -->
+
+    <div class="content-wiki">
+        <div class="welcome-section">
+            <h1>Boas-vindas à Wikipédia,</h1>
+            <span class="subtitle">a <a href="#">enciclopédia livre</a> que todos podem <a href="#">editar</a>.</span>
+            <div class="stats">
+                <b>1 151 771</b> artigos em português<br />
+                <b>7 875</b> editores ativos
+            </div>
+            <div class="quick-links">
+                <a href="#">Ajuda</a> · <a href="#">Índice</a> · <a href="#">Perguntas</a> · <a href="#">Políticas</a> · <a href="#">Portais</a>
+            </div>
+        </div>
+        <div class="tabs-bar">
+            <a class="tab-item" href="#sonic">Sonic the Hedgehog</a>
+            <a class="tab-item" href="#tetris">Tetris</a>
+            <a class="tab-item" href="#historia-linguagens">História das Linguagens de Programação</a>
+            <a class="tab-item" href="#javascript">JavaScript</a>
+        </div>
+        <div class="main-columns">
+            <section class="featured-article">
+                <h2>Artigo em destaque</h2>
+                <div class="featured-content" id="main-content-section">
+                    <img src="assets/images/game-of-thrones.png" alt="Imagem artigo em destaque" class="featured-img" />
+                    <div>
+                        <b>"If You Had My Love"</b> é uma canção da artista musical estadunidense Jennifer Lopez (imagem), contida em seu álbum de estreia <i>On the 6</i> (1999). Foi composta e produzida por Rodney Jerkins, com escrita adicional por LaShawn Daniels e Cory Rooney. Inspirada a iniciar uma carreira musical após interpretar Selena em sua cinebiografia, Lopez gravou uma demo em espanhol e iniciou as gravações de seu primeiro disco após ser contratada pela Work Group, com o empresário Tommy Mottola incentivando-a a priorizar o inglês. Inicialmente, a canção inclusa em um CD de sons instrumentais que seria enviado ao cantor Michael Jackson.
+                    </div>
+                </div>
+            </section>
+            <section class="current-events">
+                <h2>Eventos atuais</h2>
+                <ul id="main-events-section">
+                    <li><b>Jair Bolsonaro</b> (imagem), ex-presidente do Brasil, tem <a href="#">prisão domiciliar decretada</a> após descumprir medidas cautelares.<br><span class="event-desc">A decisão foi tomada após investigações sobre descumprimento de ordens judiciais.</span></li>
+                    <li><b>Brasil</b> derrota Colômbia na disputa por pênaltis na <a href="#">Copa América Feminina de 2025</a> e vence a competição pela nona vez.<br><span class="event-desc">A seleção brasileira consagra-se como maior campeã do torneio.</span></li>
+                    <li><b>Sismo</b> de magnitude 8,8 Mw atinge a <a href="#">Península de Camecháteca</a>, na Rússia, gerando alerta de tsunami no <a href="#">Oceano Pacífico</a>.<br><span class="event-desc">O tremor causou evacuações em diversas cidades costeiras.</span></li>
+                    <li><a href="#">Greve de taxistas e manifestações</a>, devido ao aumento no preço dos combustíveis.<br><span class="event-desc">Protestos ocorrem em várias capitais do país.</span></li>
+                </ul>
+            </section>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Modernizando Wikipedia. Projeto educacional.</p>
+    <script>
+    // Dark/Light mode auto and toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const setTheme = (mode, save=true) => {
+        if (mode === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        } else {
+            document.body.classList.remove('dark-mode');
+            themeToggle.textContent = '🌙';
+        }
+        if (save) localStorage.setItem('theme', mode);
+    };
+    // Detect system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        setTheme(savedTheme, false);
+    } else {
+        setTheme(prefersDark ? 'dark' : 'light', false);
+    }
+    themeToggle.addEventListener('click', () => {
+        setTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    });
+    // Listen to system changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) setTheme(e.matches ? 'dark' : 'light', false);
+    });
+
+    // Rotação automática de eventos atuais
+    const eventsSection = document.getElementById('main-events-section');
+    const allEvents = [
+        {
+            html: `<li><b>Jair Bolsonaro</b> (imagem), ex-presidente do Brasil, tem <a href='#'>prisão domiciliar decretada</a> após descumprir medidas cautelares.<br><span class='event-desc'>A decisão foi tomada após investigações sobre descumprimento de ordens judiciais.</span></li>`
+        },
+        {
+            html: `<li><b>Brasil</b> derrota Colômbia na disputa por pênaltis na <a href='#'>Copa América Feminina de 2025</a> e vence a competição pela nona vez.<br><span class='event-desc'>A seleção brasileira consagra-se como maior campeã do torneio.</span></li>`
+        },
+        {
+            html: `<li><b>Sismo</b> de magnitude 8,8 Mw atinge a <a href='#'>Península de Camecháteca</a>, na Rússia, gerando alerta de tsunami no <a href='#'>Oceano Pacífico</a>.<br><span class='event-desc'>O tremor causou evacuações em diversas cidades costeiras.</span></li>`
+        },
+        {
+            html: `<li><a href='#'>Greve de taxistas e manifestações</a>, devido ao aumento no preço dos combustíveis.<br><span class='event-desc'>Protestos ocorrem em várias capitais do país.</span></li>`
+        }
+    ];
+    let currentEvent = 0;
+    function rotateEvents() {
+        eventsSection.innerHTML = allEvents[currentEvent].html;
+        currentEvent = (currentEvent + 1) % allEvents.length;
+    }
+    setInterval(rotateEvents, 4000);
+    // Exibe todos ao carregar
+    eventsSection.innerHTML = allEvents.map(e => e.html).join('');
+
+    // SPA-like navigation for new pages
+    const mainContent = document.getElementById('main-content-section');
+    const mainEvents = document.getElementById('main-events-section');
+    const tabLinks = document.querySelectorAll('.tab-item');
+    const pageData = {
+        '#sonic': {
+            title: 'Sonic the Hedgehog',
+            html: `<img src="assets/images/sonic.png" alt="Sonic the Hedgehog" class="featured-img" /><div><b>Sonic the Hedgehog</b> é uma franquia de jogos eletrônicos criada pela Sega. O personagem Sonic é um ouriço azul com habilidade de correr em alta velocidade. <br><a href='https://pt.wikipedia.org/wiki/Sonic_the_Hedgehog' target='_blank' rel='noopener'>Referência Wikipedia</a></div>`,
+        },
+        '#tetris': {
+            title: 'Tetris',
+            html: `<img src="assets/images/tetris.png" alt="Tetris" class="featured-img" /><div><b>Tetris</b> é um famoso jogo eletrônico de quebra-cabeça criado por Alexey Pajitnov em 1984. <br><a href='https://pt.wikipedia.org/wiki/Tetris' target='_blank' rel='noopener'>Referência Wikipedia</a></div>`,
+        },
+        '#historia-linguagens': {
+            title: 'História das Linguagens de Programação',
+            html: `<img src="assets/images/historia.png" alt="História das Linguagens de Programação" class="featured-img" /><div><b>História das Linguagens de Programação</b> aborda a evolução das linguagens utilizadas para programar computadores, desde Assembly até linguagens modernas.<br><a href='https://pt.wikipedia.org/wiki/Hist%C3%B3ria_das_linguagens_de_programa%C3%A7%C3%A3o' target='_blank' rel='noopener'>Referência Wikipedia</a></div>`,
+        },
+        '#javascript': {
+            title: 'JavaScript',
+            html: `<img src="assets/images/javascript.png" alt="JavaScript" class="featured-img" /><div><b>JavaScript</b> é uma linguagem de programação amplamente utilizada para desenvolvimento web, permitindo páginas dinâmicas e interativas.<br><a href='https://pt.wikipedia.org/wiki/JavaScript' target='_blank' rel='noopener'>Referência Wikipedia</a></div>`,
+        }
+    };
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const hash = this.getAttribute('href');
+            if (pageData[hash]) {
+                e.preventDefault();
+                mainContent.innerHTML = pageData[hash].html;
+                mainEvents.style.display = 'none';
+                tabLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            } else {
+                // Página principal
+                mainContent.innerHTML = `<img src='assets/images/game-of-thrones.png' alt='Imagem artigo em destaque' class='featured-img' /><div><b>"If You Had My Love"</b> é uma canção da artista musical estadunidense Jennifer Lopez (imagem), contida em seu álbum de estreia <i>On the 6</i> (1999). Foi composta e produzida por Rodney Jerkins, com escrita adicional por LaShawn Daniels e Cory Rooney. Inspirada a iniciar uma carreira musical após interpretar Selena em sua cinebiografia, Lopez gravou uma demo em espanhol e iniciou as gravações de seu primeiro disco após ser contratada pela Work Group, com o empresário Tommy Mottola incentivando-a a priorizar o inglês. Inicialmente, a canção inclusa em um CD de sons instrumentais que seria enviado ao cantor Michael Jackson.</div>`;
+                mainEvents.style.display = '';
+                tabLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
+    });
+    window.addEventListener('hashchange', function() {
+        const hash = window.location.hash;
+        const link = Array.from(tabLinks).find(l => l.getAttribute('href') === hash);
+        if (pageData[hash] && link) {
+            link.click();
+        }
+    });
+    </script>
+    </footer>
+</body>
+</html>

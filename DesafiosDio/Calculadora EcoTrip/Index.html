@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoTrip — Calculadora de Impacto Ambiental</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #1a3d2b;
+  --moss: #2d6a4f;
+  --leaf: #52b788;
+  --mint: #95d5b2;
+  --sky: #b7e4c7;
+  --cream: #f8f5f0;
+  --sand: #e8e0d4;
+  --bark: #5c4a3a;
+  --coal: #1c1c1c;
+  --smoke: #6b7280;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--coal); min-height:100vh; overflow-x:hidden; }
+body::before {
+  content:''; position:fixed; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 10% 20%,rgba(82,183,136,0.12) 0%,transparent 60%),
+              radial-gradient(ellipse 60% 80% at 90% 80%,rgba(26,61,43,0.08) 0%,transparent 60%);
+  pointer-events:none; z-index:0;
+}
+
+/* HEADER */
+header { position:relative; background:var(--forest); color:var(--cream); overflow:hidden; }
+.header-inner { max-width:960px; margin:0 auto; padding:44px 32px 36px; position:relative; z-index:1; }
+.logo-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.logo-icon { width:48px; height:48px; background:var(--leaf); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; }
+.logo-text { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; }
+.logo-text span { color:var(--leaf); }
+header h1 { font-family:'Syne',sans-serif; font-size:clamp(24px,4.5vw,42px); font-weight:700; line-height:1.15; max-width:580px; margin-bottom:12px; }
+header p { font-size:15px; color:var(--mint); max-width:500px; line-height:1.65; font-weight:300; }
+.deco-leaf  { position:absolute; opacity:0.07; font-size:180px; right:-20px; top:-20px; transform:rotate(25deg); user-select:none; }
+.deco-leaf2 { position:absolute; opacity:0.05; font-size:120px; right:120px; bottom:-30px; transform:rotate(-15deg); user-select:none; }
+
+/* STEPS BAR */
+.steps-bar { background:var(--moss); padding:0 32px; }
+.steps-inner { max-width:960px; margin:0 auto; display:flex; overflow-x:auto; }
+.step-tab {
+  padding:13px 18px; font-family:'Syne',sans-serif; font-size:13px; font-weight:600;
+  color:var(--mint); letter-spacing:0.4px; cursor:pointer;
+  border-bottom:3px solid transparent; transition:all 0.2s;
+  display:flex; align-items:center; gap:8px; white-space:nowrap;
+}
+.step-tab.active { color:var(--cream); border-bottom-color:var(--leaf); }
+.step-tab.done .step-num { background:var(--mint); color:var(--forest); }
+.step-num {
+  width:22px; height:22px; background:rgba(255,255,255,0.15); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0;
+}
+.step-tab.active .step-num { background:var(--leaf); color:var(--forest); }
+
+/* MAIN */
+main { max-width:960px; margin:0 auto; padding:36px 32px 80px; position:relative; z-index:1; }
+.panel { display:none; animation:fadeUp 0.3s ease; }
+.panel.active { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+/* CARDS */
+.card {
+  background:#fff; border-radius:20px; padding:30px 32px;
+  box-shadow:0 2px 24px rgba(26,61,43,0.07);
+  margin-bottom:22px; border:1px solid rgba(82,183,136,0.12);
+}
+.card-title {
+  font-family:'Syne',sans-serif; font-size:18px; font-weight:700;
+  color:var(--forest); margin-bottom:6px; display:flex; align-items:center; gap:10px;
+}
+.card-title .icon {
+  width:32px; height:32px; background:var(--sky); border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.card-desc { font-size:14px; color:var(--smoke); margin-bottom:22px; line-height:1.6; }
+
+/* ── MODO SELECTOR ── */
+.mode-toggle {
+  display:flex; gap:10px; margin-bottom:24px; background:var(--cream);
+  border-radius:14px; padding:5px; border:1.5px solid var(--sand);
+}
+.mode-btn {
+  flex:1; padding:11px 10px; border:none; border-radius:10px; cursor:pointer;
+  font-family:'Syne',sans-serif; font-size:13px; font-weight:700;
+  color:var(--smoke); background:transparent; transition:all 0.2s; text-align:center;
+  line-height:1.3;
+}
+.mode-btn.active { background:var(--forest); color:#fff; box-shadow:0 3px 10px rgba(26,61,43,0.25); }
+
+/* PANELS dentro do passo 1 */
+.input-mode { display:none; }
+.input-mode.active { display:block; animation:fadeUp 0.25s ease; }
+
+/* CITY GRID */
+.city-section-label {
+  font-size:12px; font-weight:600; color:var(--smoke); letter-spacing:0.8px;
+  text-transform:uppercase; margin-bottom:10px; margin-top:4px;
+}
+.city-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-bottom:20px;
+}
+.city-card {
+  border:2px solid var(--sand); border-radius:12px; padding:12px 14px;
+  cursor:pointer; transition:all 0.2s; background:var(--cream);
+  display:flex; align-items:center; gap:10px;
+}
+.city-card:hover { border-color:var(--leaf); background:rgba(82,183,136,0.06); transform:translateY(-1px); }
+.city-card.selected { border-color:var(--leaf); background:rgba(82,183,136,0.12); box-shadow:0 3px 12px rgba(82,183,136,0.2); }
+.city-card.disabled { opacity:0.4; cursor:not-allowed; pointer-events:none; }
+.city-flag { font-size:20px; flex-shrink:0; }
+.city-info { min-width:0; }
+.city-name { font-size:13px; font-weight:600; color:var(--forest); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.city-state { font-size:11px; color:var(--smoke); }
+
+/* DIST PREVIEW */
+.dist-preview {
+  background:rgba(82,183,136,0.1); border:1.5px solid var(--leaf);
+  border-radius:12px; padding:14px 18px; margin-bottom:16px;
+  display:none; align-items:center; gap:14px;
+}
+.dist-preview.show { display:flex; }
+.dist-preview .dp-icon { font-size:24px; flex-shrink:0; }
+.dist-preview .dp-text { flex:1; }
+.dist-preview .dp-label { font-size:12px; color:var(--smoke); margin-bottom:2px; }
+.dist-preview .dp-val { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--forest); }
+.dist-preview .dp-route { font-size:12px; color:var(--moss); margin-top:2px; }
+
+/* FORM ELEMENTS */
+.field-group { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.field-group.single { grid-template-columns:1fr; }
+.field-group.triple { grid-template-columns:1fr 1fr 1fr; }
+.field { display:flex; flex-direction:column; gap:6px; }
+label { font-size:13px; font-weight:500; color:var(--bark); }
+input[type="number"],input[type="text"],select {
+  width:100%; padding:12px 14px; border:1.5px solid var(--sand); border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-size:15px; color:var(--coal);
+  background:var(--cream); transition:border-color 0.2s,box-shadow 0.2s; outline:none; appearance:none;
+}
+input:focus,select:focus { border-color:var(--leaf); box-shadow:0 0 0 3px rgba(82,183,136,0.15); background:#fff; }
+input::placeholder { color:#b0bec5; }
+select {
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c4a3a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; padding-right:40px;
+}
+
+/* RANGE */
+input[type="range"] {
+  width:100%; height:6px; appearance:none; background:var(--sand);
+  border-radius:3px; outline:none; cursor:pointer; border:none; box-shadow:none; padding:0;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance:none; width:20px; height:20px; background:var(--leaf);
+  border-radius:50%; border:3px solid #fff; box-shadow:0 2px 8px rgba(82,183,136,0.4); cursor:pointer;
+}
+.range-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--smoke); margin-top:6px; }
+
+/* TRANSPORT GRID */
+.transport-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(128px,1fr)); gap:10px; margin-bottom:8px; }
+.transport-card {
+  border:2px solid var(--sand); border-radius:12px; padding:14px 10px;
+  cursor:pointer; text-align:center; transition:all 0.2s; background:var(--cream);
+}
+.transport-card:hover { border-color:var(--leaf); background:rgba(82,183,136,0.05); transform:translateY(-2px); }
+.transport-card.selected { border-color:var(--leaf); background:rgba(82,183,136,0.1); box-shadow:0 4px 16px rgba(82,183,136,0.2); }
+.t-icon { font-size:24px; margin-bottom:7px; display:block; }
+.t-name { font-size:12px; font-weight:600; color:var(--forest); line-height:1.3; }
+.t-co2  { font-size:11px; color:var(--smoke); margin-top:3px; }
+
+/* BUTTONS */
+.btn {
+  padding:13px 26px; border:none; border-radius:12px;
+  font-family:'Syne',sans-serif; font-size:15px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; letter-spacing:0.3px;
+}
+.btn-primary   { background:var(--forest); color:#fff; box-shadow:0 4px 16px rgba(26,61,43,0.25); }
+.btn-primary:hover   { background:var(--moss); transform:translateY(-2px); }
+.btn-secondary { background:transparent; color:var(--forest); border:2px solid var(--moss); }
+.btn-secondary:hover { background:rgba(26,61,43,0.05); }
+.btn-green { background:var(--leaf); color:var(--forest); box-shadow:0 4px 14px rgba(82,183,136,0.3); }
+.btn-green:hover { background:var(--mint); transform:translateY(-2px); }
+.btn-row { display:flex; gap:12px; justify-content:flex-end; margin-top:22px; flex-wrap:wrap; }
+
+/* TIPBOX */
+.tipbox {
+  background:rgba(82,183,136,0.09); border-left:4px solid var(--leaf);
+  border-radius:0 10px 10px 0; padding:11px 16px;
+  font-size:13px; color:var(--moss); line-height:1.6; margin-top:14px;
+}
+.tipbox strong { color:var(--forest); }
+
+/* ERROR */
+.error-msg {
+  background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.3);
+  border-radius:10px; padding:10px 16px; font-size:13px; color:#c0392b; margin-top:10px; display:none;
+}
+
+/* RESULTS */
+.result-hero {
+  background:var(--forest); border-radius:22px; padding:38px 34px;
+  color:#fff; position:relative; overflow:hidden; margin-bottom:22px;
+}
+.result-hero::before { content:'🌍'; position:absolute; font-size:160px; right:-20px; top:-20px; opacity:0.07; transform:rotate(15deg); }
+.result-label { font-size:12px; color:var(--mint); letter-spacing:1px; text-transform:uppercase; font-weight:600; margin-bottom:8px; }
+.result-big { font-family:'Syne',sans-serif; font-size:clamp(46px,7vw,70px); font-weight:800; line-height:1; margin-bottom:5px; letter-spacing:-2px; }
+.result-big span { color:var(--leaf); }
+.result-unit { font-size:15px; color:var(--mint); margin-bottom:18px; font-weight:300; }
+.result-route { font-size:14px; color:rgba(255,255,255,0.6); margin-bottom:14px; }
+.result-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 18px; border-radius:100px; font-size:14px; font-weight:600; }
+.badge-danger { background:rgba(192,57,43,0.25); color:#ff8a80; }
+.badge-warn   { background:rgba(230,126,34,0.25); color:#ffcc80; }
+.badge-ok     { background:rgba(39,174,96,0.25);  color:#a5d6a7; }
+
+.metrics-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:14px; margin-bottom:22px; }
+.metric-card { background:#fff; border-radius:14px; padding:18px; border:1px solid rgba(82,183,136,0.15); box-shadow:0 2px 12px rgba(26,61,43,0.05); }
+.metric-icon { font-size:22px; margin-bottom:8px; display:block; }
+.metric-val  { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:var(--forest); line-height:1; margin-bottom:4px; }
+.metric-name { font-size:12px; color:var(--smoke); }
+
+.comparison-card {
+  background:#fff; border-radius:18px; padding:26px 30px;
+  border:1px solid rgba(82,183,136,0.12); box-shadow:0 2px 20px rgba(26,61,43,0.06); margin-bottom:22px;
+}
+.comp-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--forest); margin-bottom:18px; }
+.comp-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.comp-label { width:128px; font-size:12px; color:var(--smoke); flex-shrink:0; }
+.comp-bar-wrap { flex:1; background:var(--sand); border-radius:4px; height:9px; overflow:hidden; }
+.comp-bar { height:100%; border-radius:4px; transition:width 1s cubic-bezier(0.34,1.56,0.64,1); }
+.comp-val { width:65px; text-align:right; font-size:12px; font-weight:600; color:var(--forest); flex-shrink:0; }
+.comp-row.highlight .comp-label { color:var(--forest); font-weight:700; }
+
+.offset-card {
+  background:linear-gradient(135deg,var(--forest) 0%,var(--moss) 100%);
+  border-radius:18px; padding:26px 30px; color:#fff; margin-bottom:22px;
+  display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+}
+.offset-icon { font-size:44px; flex-shrink:0; }
+.offset-text h3 { font-family:'Syne',sans-serif; font-size:17px; font-weight:700; margin-bottom:5px; }
+.offset-text p  { font-size:13px; color:var(--mint); line-height:1.6; }
+
+.tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:12px; }
+.tip-item { background:#fff; border-radius:12px; padding:16px; border:1px solid rgba(82,183,136,0.14); display:flex; gap:11px; align-items:flex-start; }
+.tip-icon { font-size:19px; flex-shrink:0; margin-top:1px; }
+.tip-text { font-size:13px; line-height:1.55; color:var(--smoke); }
+.tip-text strong { color:var(--forest); display:block; margin-bottom:2px; }
+
+/* GUIDE */
+.guide-step { display:flex; gap:16px; margin-bottom:26px; align-items:flex-start; }
+.guide-num { width:38px; height:38px; background:var(--forest); color:var(--leaf); border-radius:11px; font-family:'Syne',sans-serif; font-size:17px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.guide-body h4 { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--forest); margin-bottom:5px; }
+.guide-body p  { font-size:13px; color:var(--smoke); line-height:1.6; }
+.tag { display:inline-block; background:var(--sky); color:var(--forest); font-size:11px; font-weight:600; padding:2px 9px; border-radius:100px; margin-left:7px; vertical-align:middle; }
+
+.print-note { text-align:center; font-size:13px; color:var(--smoke); margin-top:10px; }
+
+/* DIVIDER */
+.divider { display:flex; align-items:center; gap:12px; margin:20px 0 16px; }
+.divider span { font-size:12px; color:var(--smoke); white-space:nowrap; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--sand); }
+
+/* RESPONSIVE */
+@media(max-width:620px){
+  .field-group,.field-group.triple { grid-template-columns:1fr; }
+  .header-inner { padding:28px 18px 24px; }
+  main { padding:22px 18px 60px; }
+  .card { padding:20px 18px; }
+  .steps-bar { padding:0 14px; }
+  .step-tab { padding:11px 11px; font-size:12px; }
+  .result-hero { padding:26px 20px; }
+  .comparison-card,.offset-card { padding:20px 18px; }
+  .city-grid { grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-row">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">Eco<span>Trip</span></div>
+    </div>
+    <h1>Calculadora de Impacto Ambiental</h1>
+    <p>Estime as emissões de CO₂ da sua viagem, compare alternativas e viaje de forma mais consciente.</p>
+  </div>
+  <div class="deco-leaf">🌲</div>
+  <div class="deco-leaf2">🍃</div>
+</header>
+
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="step-tab active" id="tab-1" onclick="goStep(1)"><span class="step-num">1</span> Trajeto</div>
+    <div class="step-tab" id="tab-2" onclick="goStep(2)"><span class="step-num">2</span> Transporte</div>
+    <div class="step-tab" id="tab-3" onclick="goStep(3)"><span class="step-num">3</span> Detalhes</div>
+    <div class="step-tab" id="tab-4" onclick="goStep(4)"><span class="step-num">4</span> Resultado</div>
+    <div class="step-tab" id="tab-5" onclick="goStep(5)"><span class="step-num">?</span> Como Usar</div>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════
+     PASSO 1 — TRAJETO
+══════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-1">
+  <div class="card">
+    <div class="card-title"><div class="icon">📍</div> Informe o Trajeto</div>
+    <div class="card-desc">Escolha entre selecionar cidades do Brasil ou digitar diretamente a quilometragem da viagem.</div>
+
+    <!-- MODO SELECTOR -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-mode-cidades" onclick="setMode('cidades')">
+        🏙️ Selecionar Cidades<br><small style="font-weight:400;font-size:11px">Calcula a distância automaticamente</small>
+      </button>
+      <button class="mode-btn" id="btn-mode-km" onclick="setMode('km')">
+        📏 Digitar Quilometragem<br><small style="font-weight:400;font-size:11px">Insira a distância manualmente</small>
+      </button>
+    </div>
+
+    <!-- MODO A: CIDADES -->
+    <div class="input-mode active" id="mode-cidades">
+
+      <div class="field-group" style="margin-bottom:6px">
+        <div class="field">
+          <div class="city-section-label">🏠 Cidade de Origem</div>
+          <div class="city-grid" id="grid-origem"></div>
+        </div>
+        <div class="field">
+          <div class="city-section-label">📌 Cidade de Destino</div>
+          <div class="city-grid" id="grid-destino"></div>
+        </div>
+      </div>
+
+      <!-- Preview da distância calculada -->
+      <div class="dist-preview" id="dist-preview">
+        <div class="dp-icon">🗺️</div>
+        <div class="dp-text">
+          <div class="dp-label">Distância estimada</div>
+          <div class="dp-val" id="dp-val">—</div>
+          <div class="dp-route" id="dp-route">—</div>
+        </div>
+      </div>
+
+      <div class="tipbox"><strong>💡 Como funciona:</strong> Selecione uma cidade em cada coluna. A distância rodoviária aproximada é calculada automaticamente com base em dados reais.</div>
+    </div>
+
+    <!-- MODO B: KM MANUAL -->
+    <div class="input-mode" id="mode-km">
+      <div class="field-group single">
+        <div class="field">
+          <label>📏 Distância total da viagem (km)</label>
+          <input type="number" id="distancia-manual" placeholder="Ex: 430" min="1" max="50000">
+        </div>
+      </div>
+      <div class="tipbox"><strong>💡 Dica:</strong> Você pode medir a distância no Google Maps (clique em "Rotas") e inserir aqui. Para voos, use a distância em linha reta + 10% de desvio.</div>
+    </div>
+
+    <div class="divider"><span>informações comuns</span></div>
+
+    <!-- CAMPOS COMUNS -->
+    <div class="field-group">
+      <div class="field">
+        <label>👥 Número de Passageiros</label>
+        <input type="number" id="passageiros" placeholder="Ex: 2" min="1" max="500" value="1">
+      </div>
+      <div class="field">
+        <label>🔄 Sentido da Viagem</label>
+        <select id="idavolta">
+          <option value="1">Somente Ida</option>
+          <option value="2">Ida e Volta</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="error-msg" id="err-1">⚠️ Selecione origem e destino diferentes, ou digite a distância em km.</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="nextStep(1)">Próximo: Transporte →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PASSO 2 — TRANSPORTE
+══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-2">
+  <div class="card">
+    <div class="card-title"><div class="icon">🚗</div> Meio de Transporte</div>
+    <div class="card-desc">Selecione o principal meio de transporte da viagem. O fator de emissão (gCO₂/km/passageiro) é exibido em cada opção.</div>
+    <div class="transport-grid" id="transport-grid"></div>
+    <div class="tipbox"><strong>📊 Fontes:</strong> IPCC AR6 (2023), ANAC e Agência Internacional de Energia (IEA) para o contexto brasileiro.</div>
+    <div class="error-msg" id="err-2">⚠️ Selecione um meio de transporte para continuar.</div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(1)">← Voltar</button>
+      <button class="btn btn-primary" onclick="nextStep(2)">Próximo: Detalhes →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PASSO 3 — DETALHES
+══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-3">
+  <div class="card">
+    <div class="card-title"><div class="icon">⚙️</div> Ajuste os Detalhes</div>
+    <div class="card-desc">Refine o cálculo com o perfil do terreno e a eficiência do transporte para um resultado mais preciso.</div>
+    <div class="field-group">
+      <div class="field">
+        <label>🏔️ Perfil do Terreno</label>
+        <select id="perfil">
+          <option value="1.0">Plano / Urbano</option>
+          <option value="1.15">Levemente montanhoso</option>
+          <option value="1.3">Montanhoso / Serra</option>
+          <option value="1.5">Muito montanhoso / Altitude</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>🎒 Tipo de Viagem</label>
+        <select id="tipoviagem">
+          <option value="1.0">Turismo / Lazer</option>
+          <option value="0.9">Negócios (grupo)</option>
+          <option value="1.1">Aventura / Off-road</option>
+          <option value="1.0">Visita familiar</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-group single">
+      <div class="field">
+        <label>🌡️ Eficiência do Veículo: <strong id="efic-val">0%</strong></label>
+        <input type="range" id="eficiencia" min="-30" max="30" value="0" step="5"
+          oninput="document.getElementById('efic-val').textContent=(this.value>=0?'+':'')+this.value+'%'">
+        <div class="range-labels"><span>−30% (ineficiente)</span><span>Padrão</span><span>+30% (eficiente)</span></div>
+      </div>
+    </div>
+    <div class="tipbox"><strong>💡 Eficiência:</strong> Negativo = veículo antigo, AC sempre ligado, condução agressiva. Positivo = condução econômica, veículo novo, sem bagagem extra.</div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(2)">← Voltar</button>
+      <button class="btn btn-green" onclick="calcular()">🌿 Calcular Impacto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PASSO 4 — RESULTADO
+══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-4">
+  <div class="result-hero">
+    <div class="result-label">EMISSÃO TOTAL DE CO₂</div>
+    <div class="result-big" id="res-total">—</div>
+    <div class="result-unit">kg de CO₂ equivalente</div>
+    <div class="result-route" id="res-route"></div>
+    <div class="result-badge" id="res-badge">—</div>
+  </div>
+  <div class="metrics-grid" id="metrics-grid"></div>
+  <div class="comparison-card">
+    <div class="comp-title">⚖️ Comparação com Outros Transportes</div>
+    <div id="comp-rows"></div>
+  </div>
+  <div class="offset-card">
+    <div class="offset-icon">🌳</div>
+    <div class="offset-text">
+      <h3 id="offset-title">Compensação estimada</h3>
+      <p id="offset-desc">—</p>
+    </div>
+  </div>
+  <div class="comparison-card">
+    <div class="comp-title">💡 Dicas para Reduzir sua Pegada</div>
+    <div class="tips-grid" id="tips-grid"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goStep(3)">← Recalcular</button>
+    <button class="btn btn-primary" onclick="resetar()">🔄 Nova Viagem</button>
+  </div>
+  <p class="print-note">💾 Use Ctrl+P / ⌘P para salvar ou imprimir este relatório.</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PASSO 5 — COMO USAR
+══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-5">
+  <div class="card">
+    <div class="card-title"><div class="icon">📖</div> Como Usar a EcoTrip</div>
+    <div class="card-desc">Guia rápido para aproveitar todos os recursos da calculadora.</div>
+
+    <div class="guide-step">
+      <div class="guide-num">1</div>
+      <div class="guide-body">
+        <h4>Informe o Trajeto <span class="tag">Passo 1</span></h4>
+        <p>Escolha o <strong>modo Cidades</strong> para selecionar origem e destino entre 10 capitais/metrópoles brasileiras — a distância é calculada automaticamente. Ou use o <strong>modo Quilometragem</strong> para digitar a distância manualmente (útil para rotas personalizadas ou consultas no Google Maps).</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">2</div>
+      <div class="guide-body">
+        <h4>Escolha o Transporte <span class="tag">Passo 2</span></h4>
+        <p>Selecione o principal meio de transporte. Cada card mostra o <strong>fator de emissão em gCO₂/km/passageiro</strong>. Para rotas com múltiplos modais, escolha o que percorrer mais quilômetros.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">3</div>
+      <div class="guide-body">
+        <h4>Ajuste os Detalhes <span class="tag">Passo 3</span></h4>
+        <p>Informe o <strong>perfil do terreno</strong> (rotas em serra consomem até 50% mais) e ajuste a <strong>eficiência</strong> conforme o estado do veículo e estilo de condução. Esses multiplicadores tornam o cálculo mais fiel à realidade.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">4</div>
+      <div class="guide-body">
+        <h4>Interprete o Resultado <span class="tag">Passo 4</span></h4>
+        <p>Veja o total de CO₂, a emissão por passageiro e equivalências do cotidiano. O <strong>badge colorido</strong> indica impacto baixo 🟢, médio 🟡 ou alto 🔴. Compare com outros modais e veja quantas árvores compensariam a emissão.</p>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-num">5</div>
+      <div class="guide-body">
+        <h4>Tome Decisões Conscientes <span class="tag">Dica</span></h4>
+        <p>Use as sugestões personalizadas e compare transportes alternativos. Considere compensar emissões inevitáveis com <strong>créditos de carbono certificados</strong> (Verra, Gold Standard) ou projetos de reflorestamento como a SOS Mata Atlântica.</p>
+      </div>
+    </div>
+
+    <div class="tipbox">
+      <strong>📐 Metodologia:</strong> Fatores de emissão baseados no IPCC AR6 (2023), dados da ANAC para aviação nacional e estudos de ciclo de vida para veículos elétricos. Distâncias rodoviárias entre cidades são estimativas — podem variar ±5% em relação a rotas reais.
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goStep(1)">🚀 Começar Agora</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DADOS — 10 CIDADES DO BRASIL
+// ═══════════════════════════════════════════════════════════
+const CIDADES = [
+  { id:'SP', nome:'São Paulo',       estado:'SP', emoji:'🏙️' },
+  { id:'RJ', nome:'Rio de Janeiro',  estado:'RJ', emoji:'🌊' },
+  { id:'BH', nome:'Belo Horizonte',  estado:'MG', emoji:'⛰️' },
+  { id:'BSB',nome:'Brasília',        estado:'DF', emoji:'🏛️' },
+  { id:'SSA',nome:'Salvador',        estado:'BA', emoji:'🌴' },
+  { id:'FOR',nome:'Fortaleza',       estado:'CE', emoji:'☀️' },
+  { id:'REC',nome:'Recife',          estado:'PE', emoji:'🌺' },
+  { id:'MAN',nome:'Manaus',          estado:'AM', emoji:'🌳' },
+  { id:'POA',nome:'Porto Alegre',    estado:'RS', emoji:'🍷' },
+  { id:'CWB',nome:'Curitiba',        estado:'PR', emoji:'🌲' },
+];
+
+// Tabela de distâncias rodoviárias aproximadas (km) entre as 10 cidades
+// Fonte: dados médios rodoviários DNIT / Google Maps (rotas principais)
+const DISTANCIAS = {
+  'SP-RJ':430,  'SP-BH':590,  'SP-BSB':1015,'SP-SSA':1960,'SP-FOR':2995,
+  'SP-REC':2660,'SP-MAN':3869,'SP-POA':1109,'SP-CWB':408,
+  'RJ-BH':434,  'RJ-BSB':1148,'RJ-SSA':1655,'RJ-FOR':2800,
+  'RJ-REC':2328,'RJ-MAN':4420,'RJ-POA':1551,'RJ-CWB':856,
+  'BH-BSB':742, 'BH-SSA':1373,'BH-FOR':2615,'BH-REC':2050,
+  'BH-MAN':4183,'BH-POA':1740,'BH-CWB':1011,
+  'BSB-SSA':1452,'BSB-FOR':2207,'BSB-REC':2104,
+  'BSB-MAN':3483,'BSB-POA':2090,'BSB-CWB':1439,
+  'SSA-FOR':1193,'SSA-REC':839, 'SSA-MAN':4076,
+  'SSA-POA':2918,'SSA-CWB':2318,
+  'FOR-REC':800, 'FOR-MAN':5136,'FOR-POA':4108,'FOR-CWB':3523,
+  'REC-MAN':4690,'REC-POA':3709,'REC-CWB':3120,
+  'MAN-POA':5070,'MAN-CWB':4488,
+  'POA-CWB':591,
+};
+
+function getDistancia(a, b) {
+  if (a === b) return 0;
+  return DISTANCIAS[a+'-'+b] || DISTANCIAS[b+'-'+a] || null;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DADOS — TRANSPORTES
+// ═══════════════════════════════════════════════════════════
+const TRANSPORTES = [
+  { id:'carro-gas',  icon:'🚗', nome:'Carro (gasolina)',  fator:192, cor:'#e74c3c' },
+  { id:'carro-elet', icon:'⚡', nome:'Carro Elétrico',    fator:53,  cor:'#2ecc71' },
+  { id:'moto',       icon:'🏍️', nome:'Moto',              fator:113, cor:'#e67e22' },
+  { id:'onibus',     icon:'🚌', nome:'Ônibus',            fator:68,  cor:'#27ae60' },
+  { id:'trem',       icon:'🚆', nome:'Trem / Metrô',      fator:14,  cor:'#16a085' },
+  { id:'aviao-ec',   icon:'✈️', nome:'Avião (econômica)', fator:255, cor:'#8e44ad' },
+  { id:'aviao-ex',   icon:'🛫', nome:'Avião (executiva)', fator:612, cor:'#6c3483' },
+  { id:'ferry',      icon:'⛴️', nome:'Balsa / Ferry',     fator:120, cor:'#2980b9' },
+  { id:'bicicleta',  icon:'🚲', nome:'Bicicleta',         fator:0,   cor:'#1abc9c' },
+  { id:'a-pe',       icon:'🚶', nome:'A pé',              fator:0,   cor:'#1abc9c' },
+];
+
+const TIPS = [
+  { icon:'🚌', t:'Prefira ônibus ou trem',   d:'São até 14x menos poluentes que o avião e 3x menos que o carro individual.' },
+  { icon:'👥', t:'Viaje em grupo',            d:'Compartilhar o carro divide a emissão por passageiro.' },
+  { icon:'⚡', t:'Considere um carro elétrico',d:'Emitem ~72% menos CO₂ que os movidos a gasolina no Brasil.' },
+  { icon:'🎒', t:'Leve menos bagagem',        d:'Cada 10 kg extra num avião gera ~3 kg de CO₂ a mais em voos longos.' },
+  { icon:'🌱', t:'Compense o carbono',        d:'Projetos de reflorestamento certificados neutralizam emissões inevitáveis.' },
+  { icon:'🔧', t:'Mantenha o veículo',        d:'Pneus calibrados e filtro limpo melhoram a eficiência em até 10%.' },
+  { icon:'🛣️', t:'Planeje a rota',            d:'Evitar engarrafamentos e paradas desnecessárias economiza combustível.' },
+  { icon:'🌤️', t:'Evite horários de pico',    d:'Tráfego congestionado aumenta o consumo em até 40%.' },
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let origemSel = null;
+let destinoSel = null;
+let selectedTransport = null;
+let modoAtual = 'cidades'; // 'cidades' | 'km'
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+(function init(){
+  // Monta grids de cidades
+  renderCidadesGrid('grid-origem', 'origem');
+  renderCidadesGrid('grid-destino', 'destino');
+
+  // Monta grid de transportes
+  const tGrid = document.getElementById('transport-grid');
+  TRANSPORTES.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'transport-card';
+    div.id = 'tc-' + t.id;
+    div.innerHTML = `<span class="t-icon">${t.icon}</span><div class="t-name">${t.nome}</div><div class="t-co2">${t.fator > 0 ? t.fator+' gCO₂/km' : 'Zero emissões'}</div>`;
+    div.onclick = () => {
+      selectedTransport = t.id;
+      document.querySelectorAll('.transport-card').forEach(c => c.classList.remove('selected'));
+      div.classList.add('selected');
+    };
+    tGrid.appendChild(div);
+  });
+})();
+
+function renderCidadesGrid(containerId, tipo) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = '';
+  CIDADES.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'city-card';
+    div.id = `city-${tipo}-${c.id}`;
+    div.innerHTML = `<span class="city-flag">${c.emoji}</span><div class="city-info"><div class="city-name">${c.nome}</div><div class="city-state">${c.estado}</div></div>`;
+    div.onclick = () => selecionarCidade(tipo, c.id);
+    grid.appendChild(div);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODO (CIDADES / KM)
+// ═══════════════════════════════════════════════════════════
+function setMode(modo) {
+  modoAtual = modo;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.input-mode').forEach(m => m.classList.remove('active'));
+  document.getElementById('btn-mode-' + modo).classList.add('active');
+  document.getElementById('mode-' + modo).classList.add('active');
+  document.getElementById('err-1').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SELEÇÃO DE CIDADES
+// ═══════════════════════════════════════════════════════════
+function selecionarCidade(tipo, cidadeId) {
+  if (tipo === 'origem') {
+    origemSel = cidadeId;
+    document.querySelectorAll('[id^="city-origem-"]').forEach(el => el.classList.remove('selected'));
+    document.getElementById('city-origem-' + cidadeId).classList.add('selected');
+  } else {
+    destinoSel = cidadeId;
+    document.querySelectorAll('[id^="city-destino-"]').forEach(el => el.classList.remove('selected'));
+    document.getElementById('city-destino-' + cidadeId).classList.add('selected');
+  }
+
+  // Bloqueia a mesma cidade no outro grid
+  atualizarBloqueios();
+  atualizarPreview();
+}
+
+function atualizarBloqueios() {
+  // No grid de destino, bloqueia a cidade que foi selecionada como origem
+  CIDADES.forEach(c => {
+    const elDest = document.getElementById('city-destino-' + c.id);
+    if (elDest) elDest.classList.toggle('disabled', c.id === origemSel);
+
+    const elOrig = document.getElementById('city-origem-' + c.id);
+    if (elOrig) elOrig.classList.toggle('disabled', c.id === destinoSel);
+  });
+}
+
+function atualizarPreview() {
+  const preview = document.getElementById('dist-preview');
+  if (!origemSel || !destinoSel) { preview.classList.remove('show'); return; }
+
+  const dist = getDistancia(origemSel, destinoSel);
+  const nomeO = CIDADES.find(c => c.id === origemSel).nome;
+  const nomeD = CIDADES.find(c => c.id === destinoSel).nome;
+
+  if (dist !== null && dist > 0) {
+    document.getElementById('dp-val').textContent = dist.toLocaleString('pt-BR') + ' km';
+    document.getElementById('dp-route').textContent = nomeO + ' → ' + nomeD + ' (distância rodoviária estimada)';
+    preview.classList.add('show');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// DISTÂNCIA FINAL
+// ═══════════════════════════════════════════════════════════
+function getDistanciaFinal() {
+  if (modoAtual === 'km') {
+    return parseFloat(document.getElementById('distancia-manual').value) || 0;
+  }
+  if (!origemSel || !destinoSel) return 0;
+  return getDistancia(origemSel, destinoSel) || 0;
+}
+
+function getRotaLabel() {
+  if (modoAtual === 'km') {
+    const km = parseFloat(document.getElementById('distancia-manual').value);
+    return km ? km.toLocaleString('pt-BR') + ' km (manual)' : '';
+  }
+  if (origemSel && destinoSel) {
+    const nO = CIDADES.find(c => c.id === origemSel).nome;
+    const nD = CIDADES.find(c => c.id === destinoSel).nome;
+    return nO + ' → ' + nD;
+  }
+  return '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════════════════════
+function goStep(n) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + n).classList.add('active');
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    t.classList.remove('active', 'done');
+    if (i + 1 < n)  t.classList.add('done');
+    if (i + 1 === n) t.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextStep(from) {
+  const err = document.getElementById('err-' + from);
+  if (from === 1) {
+    const dist = getDistanciaFinal();
+    const pass = parseInt(document.getElementById('passageiros').value);
+    if (dist <= 0 || !pass || pass <= 0) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    goStep(2);
+  } else if (from === 2) {
+    if (!selectedTransport) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    goStep(3);
+  }
+}
+
+function resetar() {
+  origemSel = null; destinoSel = null; selectedTransport = null;
+  document.querySelectorAll('.city-card').forEach(c => c.classList.remove('selected','disabled'));
+  document.querySelectorAll('.transport-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('dist-preview').classList.remove('show');
+  document.getElementById('distancia-manual').value = '';
+  document.getElementById('passageiros').value = '1';
+  document.getElementById('eficiencia').value = '0';
+  document.getElementById('efic-val').textContent = '0%';
+  setMode('cidades');
+  goStep(1);
+}
+
+// ═══════════════════════════════════════════════════════════
+// CÁLCULO
+// ═══════════════════════════════════════════════════════════
+function calcular() {
+  const distancia   = getDistanciaFinal();
+  const passageiros = parseInt(document.getElementById('passageiros').value) || 1;
+  const idavolta    = parseFloat(document.getElementById('idavolta').value);
+  const perfil      = parseFloat(document.getElementById('perfil').value);
+  const eficiencia  = parseFloat(document.getElementById('eficiencia').value) / 100;
+  const tipoFator   = parseFloat(document.getElementById('tipoviagem').value);
+
+  const transp      = TRANSPORTES.find(t => t.id === selectedTransport);
+  const distTotal   = distancia * idavolta;
+  const fatorAjust  = transp.fator * perfil * tipoFator * (1 + eficiencia);
+
+  const emissaoTotal  = (fatorAjust * distTotal * passageiros) / 1000;
+  const emissaoPorPax = (fatorAjust * distTotal) / 1000;
+  const emissaoPorKm  = (fatorAjust * passageiros) / 1000;
+  const arvores       = Math.max(1, Math.ceil(emissaoTotal / 21));
+  const kmCarroEq     = Math.round(emissaoTotal / (192 / 1000));
+  const diasTV        = Math.round(emissaoTotal / 0.096);
+
+  // Badge
+  let badge, badgeClass;
+  if (emissaoTotal < 50)        { badge = '🟢 Impacto Baixo';  badgeClass = 'badge-ok'; }
+  else if (emissaoTotal < 200)  { badge = '🟡 Impacto Médio';  badgeClass = 'badge-warn'; }
+  else                          { badge = '🔴 Impacto Alto';   badgeClass = 'badge-danger'; }
+
+  // Rota label
+  const rota = getRotaLabel();
+
+  // Renderizar total
+  document.getElementById('res-total').innerHTML = emissaoTotal >= 1000
+    ? `${(emissaoTotal/1000).toFixed(2)}<span> t</span>`
+    : `${emissaoTotal.toFixed(1)}<span> kg</span>`;
+
+  const badgeEl = document.getElementById('res-badge');
+  badgeEl.className = 'result-badge ' + badgeClass;
+  badgeEl.textContent = badge;
+
+  document.getElementById('res-route').textContent = rota
+    ? '📍 ' + rota + (idavolta == 2 ? ' (ida e volta)' : ' (somente ida)')
+    : '';
+
+  // Métricas
+  document.getElementById('metrics-grid').innerHTML = [
+    ['👤', emissaoPorPax.toFixed(1) + ' kg', 'Por Passageiro'],
+    ['📏', emissaoPorKm.toFixed(3) + ' kg',  'Por Km Total'],
+    ['🌳', arvores,                           'Árvores p/ Compensar'],
+    ['🔁', distTotal.toLocaleString('pt-BR') + ' km', 'Distância Total'],
+    ['📺', diasTV.toLocaleString('pt-BR') + ' h',     '≈ TV 4K ligada'],
+    ['🚗', kmCarroEq.toLocaleString('pt-BR') + ' km', '≈ Carro gasolina'],
+  ].map(([i,v,n]) =>
+    `<div class="metric-card"><span class="metric-icon">${i}</span><div class="metric-val">${v}</div><div class="metric-name">${n}</div></div>`
+  ).join('');
+
+  // Comparação
+  const compData = TRANSPORTES.map(t => ({
+    ...t, emissao: (t.fator * distTotal * passageiros) / 1000
+  })).sort((a,b) => a.emissao - b.emissao);
+  const maxComp = Math.max(...compData.map(c => c.emissao), 1);
+
+  document.getElementById('comp-rows').innerHTML = compData.map(c => {
+    const pct = (c.emissao / maxComp * 100).toFixed(1);
+    const sel = c.id === selectedTransport;
+    return `<div class="comp-row ${sel ? 'highlight' : ''}">
+      <div class="comp-label">${c.icon} ${c.nome}</div>
+      <div class="comp-bar-wrap"><div class="comp-bar" style="width:${pct}%;background:${c.cor}"></div></div>
+      <div class="comp-val">${c.emissao.toFixed(1)} kg</div>
+    </div>`;
+  }).join('');
+
+  // Offset
+  document.getElementById('offset-title').textContent = `Compensar ${emissaoTotal.toFixed(1)} kg de CO₂`;
+  document.getElementById('offset-desc').textContent =
+    `Plante ${arvores} árvore${arvores !== 1 ? 's' : ''} e deixe-as crescer por 1 ano, ou contribua com créditos de carbono certificados (Gold Standard / Verra). A SOS Mata Atlântica e o Instituto Arapyaú aceitam doações para plantio no Brasil.`;
+
+  // Tips
+  const tips = [...TIPS].sort(() => Math.random() - 0.5).slice(0, 4);
+  document.getElementById('tips-grid').innerHTML = tips.map(tip =>
+    `<div class="tip-item"><span class="tip-icon">${tip.icon}</span><div class="tip-text"><strong>${tip.t}</strong>${tip.d}</div></div>`
+  ).join('');
+
+  goStep(4);
+}
+</script>
+</body>
+</html>

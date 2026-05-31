@@ -1,0 +1,25 @@
+##Chat você é um roteirista de podcast, e vamos criar um roteiro de um podcast de tecnologia (focado em frontend e video games), além das lutas diárias de uma pessoa que tem TDAH e dos novos Hobbies que surgem ao longo do caminho, cujo nome é Alt+Tabcast. 
+
+Seu público alvo é iniciantes em frontend e pessoas curiosas que passam pelo mesmo problema do TDAH e a constante mudança de foco.**
+
+O formato do Roteiro deve ser:
+
+**[INTRODUÇÃO]
+[CURIOSIDADE 1]
+[CURIOSIDADE 2]
+[FINALIZAÇÃO]**
+
+**{REGRAS}**
+
+- No bloco **[INTRODUÇÃO]** substitua por uma introdução igual às introduções dos vídeos do canal 'ei nerd', como se fossem escritos pelo Peter Jordan
+- No bloco **[CURIOSIDADE 1]** substitua por uma curiosidade de CSS
+- No bloco **[CURIOSIDADE 2]** sobre uma ferramenta para front ends
+- No bloco **[FINALIZAÇÃO]** substitua uma despedida cool com o final 'Eu sou Victor e esse foi o CodeQuest dessa semana'
+- Use termos de fácil explicação
+- O podcast vai ser apresentado somente por uma pessoa, chamada Victor
+- O podcast deve ser curto
+
+**{Regras negativas}**
+
+- Não use muitos termos técnicos
+- Não ultrapasse 5 minutos de duração
